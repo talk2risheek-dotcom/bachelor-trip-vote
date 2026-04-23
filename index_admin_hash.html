@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Bachelor Trip Vote</title>
+<style>
+:root{
+  --bg1:#fff9ef;
+  --bg2:#ffeaf5;
+  --bg3:#eef8ff;
+  --card:#ffffffee;
+  --text:#1f2740;
+  --muted:#66748f;
+  --line:#dde6f3;
+  --pink:#ff6fa8;
+  --purple:#8a7dff;
+  --orange:#ffb84d;
+  --green:#28c37a;
+  --red:#ff6b7a;
+  --shadow:0 18px 44px rgba(114,122,164,.14);
+  --radius:24px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at top left, rgba(255,111,168,.18), transparent 24%),
+    radial-gradient(circle at top right, rgba(138,125,255,.16), transparent 26%),
+    radial-gradient(circle at bottom right, rgba(255,184,77,.18), transparent 22%),
+    linear-gradient(180deg,var(--bg1),var(--bg2) 48%,var(--bg3));
+  min-height:100vh;
+}
+button,input,textarea{font:inherit}
+.app{max-width:1180px;margin:0 auto;padding:16px 16px 120px}
+.hero,.panel,.card,.result-card,.pair-card,.comment-card,.guide-card,.banner,.modal-card{
+  background:var(--card);
+  border:1px solid var(--line);
+  box-shadow:var(--shadow);
+}
+.hero{border-radius:28px;padding:18px}
+.hero-grid{display:grid;grid-template-columns:1.12fr .88fr;gap:14px}
+.badges,.chips,.mini-meta{display:flex;gap:8px;flex-wrap:wrap}
+.badge,.chip,.meta-pill{
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:999px;
+  padding:8px 12px;
+  font-size:12px;
+}
+.title-xl{font-size:clamp(32px,4.8vw,54px);line-height:1.02;letter-spacing:-.04em;margin:10px 0 8px;font-weight:900}
+.subtitle,.muted{color:var(--muted)}
+.subtitle{line-height:1.72;max-width:760px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+.stat{border:1px solid var(--line);background:#fff;border-radius:20px;padding:12px 14px}
+.k{font-size:11px;color:#7a89a5;text-transform:uppercase;letter-spacing:.15em}
+.v{font-size:18px;font-weight:800;margin-top:6px}
+.leader{border:1px solid var(--line);background:#fff;border-radius:24px;padding:14px}
+.leader-badge{width:100%;min-height:200px;border-radius:18px;display:flex;align-items:flex-end;justify-content:space-between;padding:16px;color:#fff;font-weight:800}
+.leader-name{font-size:30px;font-weight:900;margin-top:6px}
+.leader-why{font-size:13px;color:var(--muted)}
+.tabs{position:sticky;top:10px;z-index:20;margin:14px 0 16px}
+.tabs-shell{max-width:680px;margin:0 auto;padding:8px;border-radius:22px;border:1px solid #fff;background:#ffffffd9;backdrop-filter:blur(14px);box-shadow:var(--shadow)}
+.tabs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tab{border:none;background:transparent;color:var(--text);cursor:pointer;border-radius:16px;padding:13px 12px;font-weight:800}
+.tab.active{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff}
+.view{display:none}
+.view.active{display:block}
+.page{display:grid;grid-template-columns:.78fr 1.22fr;gap:16px}
+.panel{border-radius:24px;padding:16px}
+.panel h2{margin:0 0 8px;font-size:28px}
+.form-grid{display:grid;gap:12px;margin-top:14px}
+.text-input,.text-area{
+  width:100%;border:1px solid var(--line);background:#fff;color:var(--text);
+  border-radius:18px;padding:14px 15px
+}
+.text-area{min-height:104px;resize:vertical}
+.callout{border:1px solid var(--line);background:#fff;border-radius:18px;padding:13px 14px;margin-top:12px}
+.callout strong{display:block;font-size:16px}
+.list{display:grid;gap:12px}
+.card{border-radius:22px;overflow:hidden}
+.card-inner{display:grid;grid-template-columns:1fr;gap:0}
+.ribbon{
+  padding:14px 16px;
+  display:flex;justify-content:space-between;align-items:flex-end;gap:12px;color:#fff
+}
+.dest-title{font-size:24px;font-weight:900;line-height:1.05}
+.dest-sub{font-size:14px;opacity:.92;margin-top:4px}
+.dest-score{font-size:34px;font-weight:900;line-height:1}
+.card-body{padding:14px}
+.score-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.score-btn{
+  min-width:42px;padding:10px 12px;border-radius:14px;border:1px solid var(--line);
+  background:#fff;color:var(--text);cursor:pointer;font-weight:800
+}
+.score-btn.active{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;border-color:transparent}
+.score-label{font-size:12px;color:var(--muted)}
+.bottom-row{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:12px;flex-wrap:wrap}
+.switch{
+  border:1px solid var(--line);background:#fff;color:var(--text);cursor:pointer;
+  border-radius:999px;padding:10px 12px;font-weight:700
+}
+.switch.on{background:#ffe9ee;border-color:#ffc6cf;color:#cc465f}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.action-btn,.btn.secondary{
+  border:1px solid var(--line);background:#fff;color:var(--text);cursor:pointer;
+  border-radius:14px;padding:10px 12px;font-weight:700
+}
+.tags{margin-top:10px}
+.submit-sticky{position:sticky;bottom:14px;z-index:15;margin-top:14px}
+.submit-shell{
+  border:1px solid #fff;background:#ffffffeb;backdrop-filter:blur(18px);
+  border-radius:20px;padding:10px;display:flex;justify-content:space-between;gap:12px;align-items:center;box-shadow:var(--shadow)
+}
+.btn{border:none;cursor:pointer;border-radius:16px;padding:12px 16px;font-weight:800}
+.btn.primary{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff}
+.results{display:grid;grid-template-columns:1.05fr .95fr;gap:16px}
+.banner{border-radius:24px;padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:center}
+.badge-art{min-height:220px;border-radius:18px;color:#fff;padding:18px;display:flex;align-items:flex-end;justify-content:space-between}
+.big{font-size:38px;font-weight:900;line-height:1.02}
+.grid{display:grid;gap:12px}
+.result-card,.pair-card,.comment-card,.guide-card{border-radius:22px;padding:14px}
+.rank-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.rank-name{font-size:22px;font-weight:900}
+.bar{height:10px;background:#edf2fa;border-radius:999px;overflow:hidden;margin-top:10px}
+.fill{height:100%;background:linear-gradient(90deg,var(--pink),var(--purple))}
+.guide-card{padding:0;overflow:hidden}
+.guide-card .body{padding:14px}
+.guide-art{min-height:180px;padding:16px;color:#fff;display:flex;align-items:flex-end;justify-content:space-between}
+.toast{
+  position:fixed;top:14px;left:50%;transform:translateX(-50%);
+  border:1px solid #fff;background:#ffffffee;backdrop-filter:blur(14px);
+  border-radius:16px;padding:12px 14px;z-index:60;display:none;box-shadow:var(--shadow)
+}
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(39,52,89,.22);backdrop-filter:blur(6px);z-index:80;padding:14px}
+.modal.show{display:flex}
+.modal-card{width:min(860px,100%);max-height:90vh;overflow:auto;border-radius:26px;padding:16px}
+.modal-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.close-btn{width:42px;height:42px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--text);cursor:pointer}
+.live-pill{font-weight:700}
+.live-pill.good{color:#117b57}
+.live-pill.local{color:#a26a00}
+
+.admin-box{display:none;margin-top:12px;border:1px dashed var(--line);background:#fff8fb;border-radius:18px;padding:13px 14px}
+.admin-box.show{display:block}
+.admin-title{font-size:14px;font-weight:800;color:#b13f6d;margin-bottom:8px}
+.btn.danger{background:#fff0f3;color:#c6435e;border:1px solid #ffc6cf}
+.small-note{font-size:12px;color:var(--muted);line-height:1.6}
+@media (max-width:980px){
+  .hero-grid,.page,.results,.banner{grid-template-columns:1fr}
+  .stats{grid-template-columns:1fr}
+  .title-xl{font-size:36px}
+}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+
+<div class="app">
+  <section class="hero">
+    <div class="hero-grid">
+      <div>
+        <div class="badges">
+          <span class="badge">Bachelor Trip Vote</span>
+          <span class="badge">₹1 lakh per person</span>
+          <span class="badge">3 nights / 4 days</span>
+        </div>
+        <div class="title-xl">Vote first. Keep it simple. Share one live link.</div>
+        <div class="subtitle">This version removes the fragile external script dependency and uses direct Supabase API calls instead. It should behave much more reliably on GitHub Pages and mobile browsers.</div>
+        <div class="stats">
+          <div class="stat"><div class="k">Opening page</div><div class="v">Vote</div></div>
+          <div class="stat"><div class="k">Winner logic</div><div class="v">Consensus head-to-head</div></div>
+          <div class="stat"><div class="k">Mode</div><div class="v" id="modeText">Checking…</div></div>
+        </div>
+      </div>
+      <div class="leader">
+        <div class="k">Current leader</div>
+        <div class="leader-name" id="heroWinnerName"></div>
+        <div class="leader-why" id="heroWinnerWhy"></div>
+        <div class="leader-badge" id="heroWinnerBadge"></div>
+        <div class="chips" id="heroWinnerChips" style="margin-top:12px"></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="tabs">
+    <div class="tabs-shell">
+      <div class="tabs-grid">
+        <button class="tab active" data-tab="vote">Vote</button>
+        <button class="tab" data-tab="results">Results</button>
+        <button class="tab" data-tab="guide">Destinations</button>
+      </div>
+    </div>
+  </div>
+
+  <section id="vote" class="view active">
+    <div class="page">
+      <div class="panel">
+        <h2>Your vote</h2>
+        <div class="muted" style="line-height:1.72">Rate each destination. If the same person submits again later, the latest submission replaces the earlier one.</div>
+
+        <div class="form-grid">
+          <input id="voterName" class="text-input" type="text" placeholder="Your name or nickname">
+          <textarea id="voterComment" class="text-area" placeholder="Optional note: beaches matter, nightlife matters, easy visa, prefer value, etc."></textarea>
+        </div>
+
+        <div class="callout">
+          <strong>Scoring guide</strong>
+          <div class="muted" style="margin-top:6px;line-height:1.68">0 hard pass · 1 prefer not · 2 not ideal · 3 could work · 4 strong yes · 5 top choice</div>
+        </div>
+
+        <div class="callout">
+          <strong>Use hard no carefully</strong>
+          <div class="muted" style="margin-top:6px;line-height:1.68">Only mark hard no if you would genuinely be unhappy with that destination winning.</div>
+        </div>
+
+        <div class="callout">
+          <strong>Progress</strong>
+          <div class="muted" id="completionText" style="margin-top:6px">0 destinations rated 4 or 5</div>
+        </div>
+
+        <div class="callout" id="adminUnlockTarget" title="status">
+          <strong>Live status</strong>
+          <div class="muted" id="liveStatus" style="margin-top:6px">Checking configuration…</div>
+        </div>
+
+        <div class="admin-box" id="adminBox">
+          <div class="admin-title">Admin controls</div>
+          <div class="small-note">Hidden control unlocked. This reset is convenient, but not truly secure in a browser-only app.</div>
+          <div class="mini-meta" style="margin-top:10px">
+            <button id="adminResetBtn" class="btn danger">Reset all votes</button>
+            <button id="adminHideBtn" class="btn secondary">Hide</button>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div id="voteList" class="list"></div>
+
+        <div class="submit-sticky">
+          <div class="submit-shell">
+            <div class="muted" style="font-size:13px">This link is ready for shared live voting once the API calls connect cleanly.</div>
+            <div class="mini-meta">
+              <button id="resetDemoBtn" class="btn secondary">Reset local demo</button>
+              <button id="submitVoteBtn" class="btn primary">Submit vote</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="results" class="view">
+    <div class="results">
+      <div class="grid">
+        <div class="banner">
+          <div>
+            <div class="k">Winner right now</div>
+            <div class="big" id="winnerName"></div>
+            <div class="muted" style="margin-top:6px" id="winnerWhy"></div>
+            <div class="chips" id="winnerChips" style="margin-top:12px"></div>
+          </div>
+          <div class="badge-art" id="winnerBadge"></div>
+        </div>
+
+        <div class="panel">
+          <h2>Leaderboard</h2>
+          <div class="muted">Average score, hard-no count, and a consensus-friendly ranking.</div>
+          <div id="leaderboard" class="grid" style="margin-top:14px"></div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="panel">
+          <h2>Head-to-head</h2>
+          <div class="muted">Which destination beats which in direct comparisons.</div>
+          <div id="pairwiseList" class="grid" style="margin-top:14px"></div>
+        </div>
+
+        <div class="panel">
+          <h2>Comments</h2>
+          <div class="muted">Anonymous snippets from submitted notes.</div>
+          <div id="commentsList" class="grid" style="margin-top:14px"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="guide" class="view">
+    <div class="panel">
+      <h2>Destination quick guide</h2>
+      <div class="muted">Use this if you want context before voting. The vote page is the main experience.</div>
+      <div id="guideCards" class="grid" style="margin-top:14px"></div>
+    </div>
+  </section>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-card" id="modalCard"></div>
+</div>
+
+<script>
+const SUPABASE_URL = "https://dtjlmukfovrjczmvtxdk.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0amxtdWtmb3ZyamN6bXZ0eGRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5NTAzOTEsImV4cCI6MjA5MjUyNjM5MX0.3O0a3MaGEk-2DB168fFSr2Tj6UjCvveZSOcxdEP8h8M";
+const TRIP_KEY = "bachelor_trip_rrs_2026";
+const LOCAL_KEY = "bachelor_trip_vote_fallback";
+const SCORE_LABEL = {0:"Hard pass",1:"Prefer not",2:"Not ideal",3:"Could work",4:"Strong yes",5:"Top choice"};
+
+const DESTINATIONS = [
+  {id:"bali", name:"Bali", country:"Indonesia", cost:95000, visa:"Easy", emoji:"🌴", palette:"linear-gradient(135deg,#ff7eb3,#ffb36b)", tags:["Beach + villa","Nightlife","Visa ease","Luxury feel"], summary:"Stylish all-rounder with villas, beach clubs, spa time, and strong broad-group appeal.", why:["Strong broad support","Low regret option","Feels like a proper trip"], itinerary:[{day:"Day 1",text:"Arrive, villa check-in, pool downtime, sunset dinner."},{day:"Day 2",text:"Beach club day, optional surf or spa, easy nightlife."},{day:"Day 3",text:"Activity day, private dinner, back-to-villa after-party."},{day:"Day 4",text:"Brunch and departure."}]},
+  {id:"vietnam", name:"Vietnam · Hanoi / Ho Chi Minh", country:"Vietnam", cost:85000, visa:"Moderate", emoji:"🏙️", palette:"linear-gradient(135deg,#7f8cff,#4fd1c5)", tags:["City energy","Food + bars","Best value","Nightlife"], summary:"Strong urban-energy option with nightlife, food, cafés, and a different city-trip feel from a beach holiday.", why:["Best if the group wants city buzz","Great food scene","Feels distinct from beach options"], itinerary:[{day:"Day 1",text:"Arrive, city dinner, bars, light first night."},{day:"Day 2",text:"City exploration, cafés, rooftop or club night."},{day:"Day 3",text:"Day activity or local district crawl, final late night."},{day:"Day 4",text:"Brunch and depart."}]},
+  {id:"baku", name:"Baku", country:"Azerbaijan", cost:98000, visa:"Moderate", emoji:"🌃", palette:"linear-gradient(135deg,#6366f1,#ec4899)", tags:["City energy","Rooftops","Dress-up vibe","Waterfront"], summary:"Polished city-break choice with rooftops, waterfront energy, and a more dressed-up group vibe.", why:["Best if the group wants a city trip","More premium-feeling nights","Less beach, more polish"], itinerary:[{day:"Day 1",text:"Check in, old city dinner, rooftop drinks."},{day:"Day 2",text:"City exploration, cafés, waterfront evening."},{day:"Day 3",text:"Resort or luxury-dinner day, final night out."},{day:"Day 4",text:"Brunch and departure."}]},
+  {id:"goa", name:"Goa", country:"India", cost:55000, visa:"Domestic", emoji:"☀️", palette:"linear-gradient(135deg,#ffb84d,#ff7e67)", tags:["No visa","Cheapest","Villa party","Least planning"], summary:"Cheapest practical answer and easiest to pull off if convenience matters more than going international.", why:["Best for convenience","Lowest planning friction","Easy fallback choice"], itinerary:[{day:"Day 1",text:"Arrive, villa check-in, dinner, easy first night."},{day:"Day 2",text:"Pool day, beach afternoon, club night."},{day:"Day 3",text:"Boat day, brunch, poker or villa party."},{day:"Day 4",text:"Slow morning and return."}]},
+  {id:"malaysia", name:"Malaysia · Kuala Lumpur", country:"Malaysia", cost:80000, visa:"Easy", emoji:"🌆", palette:"linear-gradient(135deg,#4f46e5,#22c55e)", tags:["City break","Food + bars","Visa ease","Good value"], summary:"Clean, easy city-break option with skyline bars, shopping, food, and lower hassle than some alternatives.", why:["Strong if the group wants easy logistics","Good nightlife without chaos","Balanced option"], itinerary:[{day:"Day 1",text:"Arrive, dinner, skyline bar, easy first night."},{day:"Day 2",text:"City exploration, brunch, rooftop or club night."},{day:"Day 3",text:"Shopping, activity, final dinner and drinks."},{day:"Day 4",text:"Breakfast and depart."}]},
+  {id:"thailand", name:"Thailand · Koh Samui / Koh Phangan", country:"Thailand", cost:90000, visa:"Easy", emoji:"🛥️", palette:"linear-gradient(135deg,#06b6d4,#8b5cf6)", tags:["Island trip","Beach + villa","Party","Boat day"], summary:"Island-heavy option that leans more beach, villa, boat, and party than city energy.", why:["Best if the group wants an island holiday","More special than a plain city trip","Very strong fun factor"], itinerary:[{day:"Day 1",text:"Arrive, check in, beach dinner, warm-up drinks."},{day:"Day 2",text:"Boat day, beach clubs, nightlife."},{day:"Day 3",text:"Pool, beach, party or relaxed villa evening."},{day:"Day 4",text:"Brunch and fly back."}]}
+];
+
+const DEMO_BALLOTS = [
+  {voter:"RRS", comment:"Need a proper trip, not just convenience.", scores:{bali:5,vietnam:4,baku:3,goa:2,malaysia:3,thailand:5}, hardNo:[]},
+  {voter:"Nikita", comment:"Easy logistics and strong vacation feel matter.", scores:{bali:5,vietnam:4,baku:3,goa:1,malaysia:4,thailand:4}, hardNo:["goa"]},
+  {voter:"Aman", comment:"Nightlife and value both matter.", scores:{bali:4,vietnam:4,baku:3,goa:4,malaysia:3,thailand:5}, hardNo:[]}
+];
+
+let ballots = [];
+let liveMode = false;
+let draftScores = Object.fromEntries(DESTINATIONS.map(d => [d.id, 3]));
+let draftHardNo = [];
+let pollTimer = null;
+let adminUnlocked = false;
+let adminTapCount = 0;
+let adminTapTimer = null;
+
+function byId(id){ return DESTINATIONS.find(d => d.id === id); }
+function money(n){ return "₹" + n.toLocaleString("en-IN"); }
+
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.style.display = "block";
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(()=>t.style.display="none", 2300);
+}
+
+function switchTab(tab){
+  document.querySelectorAll(".tab").forEach(btn => btn.classList.toggle("active", btn.dataset.tab === tab));
+  document.querySelectorAll(".view").forEach(v => v.classList.toggle("active", v.id === tab));
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function openModal(content){
+  document.getElementById("modalCard").innerHTML = content;
+  document.getElementById("modal").classList.add("show");
+  const close = document.getElementById("closeModalBtn");
+  if(close) close.addEventListener("click", closeModal);
+}
+function closeModal(){ document.getElementById("modal").classList.remove("show"); }
+document.getElementById("modal").addEventListener("click", (e)=>{ if(e.target.id==="modal") closeModal(); });
+
+function localSave(){ localStorage.setItem(LOCAL_KEY, JSON.stringify(ballots)); }
+function localLoad(){
+  try { return JSON.parse(localStorage.getItem(LOCAL_KEY)) || [...DEMO_BALLOTS]; }
+  catch { return [...DEMO_BALLOTS]; }
+}
+
+function avgScore(id){
+  if(!ballots.length) return 0;
+  return ballots.reduce((sum,b) => sum + (b.scores[id] ?? 0), 0) / ballots.length;
+}
+function hardNoCount(id){ return ballots.filter(b => (b.hardNo || []).includes(id)).length; }
+
+function pairwise(){
+  const out = [];
+  for(let i=0;i<DESTINATIONS.length;i++){
+    for(let j=i+1;j<DESTINATIONS.length;j++){
+      const a = DESTINATIONS[i].id, b = DESTINATIONS[j].id;
+      let aVotes = 0, bVotes = 0;
+      ballots.forEach(ballot => {
+        const av = ballot.scores[a] ?? 0;
+        const bv = ballot.scores[b] ?? 0;
+        if(av > bv) aVotes++;
+        if(bv > av) bVotes++;
+      });
+      out.push({a,b,aVotes,bVotes,winner:aVotes===bVotes?null:(aVotes>bVotes?a:b),margin:Math.abs(aVotes-bVotes)});
+    }
+  }
+  return out;
+}
+function condorcetWinner(){
+  const pairs = pairwise();
+  for(const d of DESTINATIONS){
+    const beatsAll = pairs.every(p => {
+      if(p.a !== d.id && p.b !== d.id) return true;
+      if(p.a === d.id) return p.aVotes > p.bVotes;
+      return p.bVotes > p.aVotes;
+    });
+    if(beatsAll) return d.id;
+  }
+  return null;
+}
+function createsCycle(graph,start,end){
+  const stack=[end], seen=new Set();
+  while(stack.length){
+    const node=stack.pop();
+    if(node===start) return true;
+    if(seen.has(node)) continue;
+    seen.add(node);
+    (graph[node]||[]).forEach(next => stack.push(next));
+  }
+  return false;
+}
+function rankedPairsOrder(){
+  const graph = Object.fromEntries(DESTINATIONS.map(d => [d.id, []]));
+  const edges = pairwise().filter(p=>p.winner).map(p=>({
+    from:p.winner,to:p.winner===p.a?p.b:p.a,margin:p.margin,strength:Math.max(p.aVotes,p.bVotes)
+  })).sort((x,y)=>y.margin-x.margin || y.strength-x.strength);
+  edges.forEach(edge => { if(!createsCycle(graph, edge.from, edge.to)) graph[edge.from].push(edge.to); });
+  const incoming = Object.fromEntries(DESTINATIONS.map(d => [d.id, 0]));
+  Object.keys(graph).forEach(k => graph[k].forEach(to => incoming[to]++));
+  return [...DESTINATIONS].sort((a,b)=>incoming[a.id]-incoming[b.id] || avgScore(b.id)-avgScore(a.id));
+}
+function winnerInfo(){
+  const cw = condorcetWinner();
+  if(cw) return {dest:byId(cw), why:"Consensus winner from direct comparisons"};
+  return {dest:rankedPairsOrder()[0], why:"Ranked Pairs winner after tie resolution"};
+}
+
+function destinationBadge(d, height="200px"){
+  return `<div style="background:${d.palette};min-height:${height};border-radius:18px;padding:16px;color:#fff;display:flex;align-items:flex-end;justify-content:space-between">
+    <div>
+      <div style="font-size:32px;font-weight:900;line-height:1">${d.name}</div>
+      <div style="margin-top:6px;opacity:.95">${d.country}</div>
+    </div>
+    <div style="font-size:42px">${d.emoji}</div>
+  </div>`;
+}
+
+
+function renderAdminBox(){
+  const box = document.getElementById("adminBox");
+  if(!box) return;
+  box.classList.toggle("show", adminUnlocked);
+  const resetBtn = document.getElementById("adminResetBtn");
+  const hideBtn = document.getElementById("adminHideBtn");
+  if(resetBtn){
+    resetBtn.onclick = resetAllVotes;
+  }
+  if(hideBtn){
+    hideBtn.onclick = () => {
+      adminUnlocked = false;
+      renderAdminBox();
+      toast("Admin controls hidden.");
+    };
+  }
+}
+
+function renderHero(){
+  const {dest, why} = winnerInfo();
+  document.getElementById("heroWinnerName").textContent = dest.name;
+  document.getElementById("heroWinnerWhy").textContent = why;
+  document.getElementById("heroWinnerBadge").innerHTML = destinationBadge(dest, "200px");
+  document.getElementById("heroWinnerChips").innerHTML = dest.tags.map(t=>`<span class="chip">${t}</span>`).join("");
+}
+function renderVote(){
+  const el = document.getElementById("voteList");
+  el.innerHTML = DESTINATIONS.map(d => `
+    <div class="card">
+      <div class="ribbon" style="background:${d.palette}">
+        <div>
+          <div class="dest-title">${d.name}</div>
+          <div class="dest-sub">${d.country} · ${money(d.cost)} · ${d.visa}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="dest-score">${draftScores[d.id]}</div>
+          <div class="score-label" style="color:rgba(255,255,255,.92)">${SCORE_LABEL[draftScores[d.id]]}</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="chips tags">${d.tags.map(t=>`<span class="chip">${t}</span>`).join("")}</div>
+        <div class="score-row">
+          ${[0,1,2,3,4,5].map(score=>`<button class="score-btn ${draftScores[d.id]===score?"active":""}" data-score-dest="${d.id}" data-score-value="${score}">${score}</button>`).join("")}
+        </div>
+        <div class="bottom-row">
+          <button class="switch ${draftHardNo.includes(d.id)?"on":""}" data-hardno="${d.id}">${draftHardNo.includes(d.id)?"Hard no selected":"Mark hard no"}</button>
+          <div class="actions">
+            <button class="action-btn" data-itinerary="${d.id}">Itinerary</button>
+            <button class="action-btn" data-why="${d.id}">Why pick this</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join("");
+
+  document.querySelectorAll("[data-score-dest]").forEach(btn => btn.addEventListener("click", ()=>{
+    draftScores[btn.dataset.scoreDest] = Number(btn.dataset.scoreValue);
+    renderVote();
+    renderCompletion();
+  }));
+
+  document.querySelectorAll("[data-hardno]").forEach(btn => btn.addEventListener("click", ()=>{
+    const id = btn.dataset.hardno;
+    draftHardNo = draftHardNo.includes(id) ? draftHardNo.filter(x=>x!==id) : [...draftHardNo, id];
+    renderVote();
+  }));
+
+  document.querySelectorAll("[data-itinerary]").forEach(btn => btn.addEventListener("click", ()=>{
+    const d = byId(btn.dataset.itinerary);
+    openModal(`
+      <div class="modal-head">
+        <div>
+          <div class="k">Itinerary</div>
+          <div style="font-size:32px;font-weight:900;line-height:1.05;margin-top:6px">${d.name}</div>
+          <div class="muted" style="margin-top:6px">${d.country} · ${money(d.cost)} · ${d.visa}</div>
+        </div>
+        <button class="close-btn" id="closeModalBtn">✕</button>
+      </div>
+      ${destinationBadge(d, "220px")}
+      <div class="grid" style="margin-top:14px">
+        ${d.itinerary.map(day=>`<div class="callout" style="margin-top:0"><strong>${day.day}</strong><div class="muted" style="margin-top:6px;line-height:1.7">${day.text}</div></div>`).join("")}
+      </div>
+    `);
+  }));
+
+  document.querySelectorAll("[data-why]").forEach(btn => btn.addEventListener("click", ()=>{
+    const d = byId(btn.dataset.why);
+    openModal(`
+      <div class="modal-head">
+        <div>
+          <div class="k">Why pick this</div>
+          <div style="font-size:32px;font-weight:900;line-height:1.05;margin-top:6px">${d.name}</div>
+          <div class="muted" style="margin-top:6px">${d.summary}</div>
+        </div>
+        <button class="close-btn" id="closeModalBtn">✕</button>
+      </div>
+      ${destinationBadge(d, "220px")}
+      <div class="chips" style="margin-top:14px">${d.tags.map(t=>`<span class="chip">${t}</span>`).join("")}</div>
+      <div class="grid" style="margin-top:14px">
+        ${d.why.map(item=>`<div class="callout" style="margin-top:0"><strong>${item}</strong></div>`).join("")}
+      </div>
+    `);
+  }));
+
+  renderCompletion();
+}
+function renderCompletion(){
+  const count = Object.values(draftScores).filter(v=>v>=4).length;
+  document.getElementById("completionText").textContent = `${count} destinations rated 4 or 5`;
+}
+
+async function supabaseFetch(path, options={}){
+  const res = await fetch(`${SUPABASE_URL}${path}`, {
+    ...options,
+    headers: {
+      "apikey": SUPABASE_ANON_KEY,
+      "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+      "Content-Type": "application/json",
+      ...(options.headers || {})
+    }
+  });
+  const text = await res.text();
+  let data = null;
+  try { data = text ? JSON.parse(text) : null; } catch { data = text; }
+  if(!res.ok) throw new Error(typeof data === "string" ? data : JSON.stringify(data));
+  return data;
+}
+
+async function loadLiveBallots(){
+  const rows = await supabaseFetch(`/rest/v1/trip_votes?trip_key=eq.${encodeURIComponent(TRIP_KEY)}&select=voter,comment,scores,hard_no,updated_at&order=updated_at.desc`);
+  ballots = (rows || []).map(r => ({
+    voter:r.voter,
+    comment:r.comment || "",
+    scores:r.scores || {},
+    hardNo:r.hard_no || []
+  }));
+}
+async function saveLiveBallot(ballot){
+  await supabaseFetch(`/rest/v1/trip_votes?on_conflict=trip_key,voter_lower`, {
+    method:"POST",
+    headers:{ "Prefer":"resolution=merge-duplicates,return=minimal" },
+    body: JSON.stringify([{
+      trip_key: TRIP_KEY,
+      voter: ballot.voter,
+      voter_lower: ballot.voter.toLowerCase(),
+      comment: ballot.comment,
+      scores: ballot.scores,
+      hard_no: ballot.hardNo,
+      updated_at: new Date().toISOString()
+    }])
+  });
+}
+async function detectLiveMode(){
+  if(!SUPABASE_URL || !SUPABASE_ANON_KEY){
+    ballots = localLoad();
+    liveMode = false;
+    document.getElementById("modeText").innerHTML = `<span class="live-pill local">Local demo</span>`;
+    document.getElementById("liveStatus").textContent = "Supabase is not configured in this file.";
+    return;
+  }
+  try{
+    await loadLiveBallots();
+    liveMode = true;
+    document.getElementById("modeText").innerHTML = `<span class="live-pill good">Live</span>`;
+    document.getElementById("liveStatus").textContent = "Live mode is on. Everyone using this link should see the same votes.";
+    clearInterval(pollTimer);
+    pollTimer = setInterval(async ()=>{
+      try { await loadLiveBallots(); renderHero(); renderResults(); }
+      catch(e){ console.error(e); }
+    }, 5000);
+  }catch(err){
+    console.error(err);
+    ballots = localLoad();
+    liveMode = false;
+    document.getElementById("modeText").innerHTML = `<span class="live-pill local">Local fallback</span>`;
+    document.getElementById("liveStatus").textContent = "Live connection failed, so this link is falling back to local mode on this device.";
+  }
+}
+
+
+async function resetAllVotes(){
+  const ok = confirm("Reset all votes for this trip?");
+  if(!ok) return;
+
+  try{
+    if(liveMode){
+      await supabaseFetch(`/rest/v1/trip_votes?trip_key=eq.${encodeURIComponent(TRIP_KEY)}`, {
+        method:"DELETE"
+      });
+      ballots = [];
+    } else {
+      ballots = [];
+      localSave();
+    }
+    renderHero();
+    renderResults();
+    toast("All votes reset.");
+  }catch(err){
+    console.error(err);
+    toast("Reset failed. You may need the delete policy in Supabase.");
+  }
+}
+
+async function submitVote(){
+  const voter = document.getElementById("voterName").value.trim();
+  const comment = document.getElementById("voterComment").value.trim();
+  if(!voter){ toast("Please enter your name first."); return; }
+
+  const ballot = { voter, comment, scores:{...draftScores}, hardNo:[...draftHardNo] };
+
+  try{
+    if(liveMode){
+      await saveLiveBallot(ballot);
+      await loadLiveBallots();
+    } else {
+      ballots = ballots.filter(b => b.voter.trim().toLowerCase() !== voter.toLowerCase());
+      ballots.push(ballot);
+      localSave();
+    }
+    document.getElementById("voterName").value = "";
+    document.getElementById("voterComment").value = "";
+    draftScores = Object.fromEntries(DESTINATIONS.map(d => [d.id, 3]));
+    draftHardNo = [];
+    renderVote();
+    renderResults();
+    renderHero();
+    switchTab("results");
+    toast("Vote submitted.");
+  }catch(err){
+    console.error(err);
+    toast("Submit failed. Check live setup.");
+  }
+}
+function resetDemo(){
+  if(liveMode){ toast("Reset works only in local demo mode."); return; }
+  ballots = [...DEMO_BALLOTS];
+  localSave();
+  renderHero();
+  renderResults();
+  toast("Local demo votes restored.");
+}
+
+function renderResults(){
+  const {dest, why} = winnerInfo();
+  document.getElementById("winnerName").textContent = dest.name;
+  document.getElementById("winnerWhy").textContent = why;
+  document.getElementById("winnerBadge").innerHTML = destinationBadge(dest, "220px");
+  document.getElementById("winnerChips").innerHTML = dest.tags.map(t=>`<span class="chip">${t}</span>`).join("");
+
+  const ranking = [...DESTINATIONS].map(d=>({...d, avg:avgScore(d.id), hard:hardNoCount(d.id)}))
+    .sort((a,b)=>b.avg-a.avg || a.hard-b.hard);
+
+  document.getElementById("leaderboard").innerHTML = ranking.map((d,i)=>`
+    <div class="result-card">
+      <div class="rank-top">
+        <div>
+          <div class="rank-name">${i+1}. ${d.name}</div>
+          <div class="muted" style="margin-top:4px">${d.country}</div>
+        </div>
+        <div class="meta-pill">${d.avg.toFixed(2)} / 5</div>
+      </div>
+      <div class="bar"><div class="fill" style="width:${(d.avg/5)*100}%"></div></div>
+      <div class="mini-meta" style="margin-top:12px">
+        <span class="meta-pill">Est. ${money(d.cost)}</span>
+        <span class="meta-pill">Hard no: ${d.hard}</span>
+        <span class="meta-pill">Visa: ${d.visa}</span>
+      </div>
+    </div>
+  `).join("");
+
+  document.getElementById("pairwiseList").innerHTML = pairwise().map(p=>{
+    const a = byId(p.a).name, b = byId(p.b).name;
+    const w = p.winner ? byId(p.winner).name : "Tie";
+    return `<div class="pair-card"><div style="font-weight:900">${a} vs ${b}</div><div class="muted" style="margin-top:6px">${p.aVotes} - ${p.bVotes} · Winner: ${w}</div></div>`;
+  }).join("");
+
+  const comments = ballots.filter(b=>b.comment && b.comment.trim());
+  document.getElementById("commentsList").innerHTML = comments.length
+    ? comments.map(c=>`<div class="comment-card">“${c.comment.replace(/</g,"&lt;")}”</div>`).join("")
+    : `<div class="comment-card"><span class="muted">No comments yet.</span></div>`;
+}
+
+function renderGuide(){
+  const el = document.getElementById("guideCards");
+  el.innerHTML = DESTINATIONS.map(d=>`
+    <div class="guide-card">
+      ${destinationBadge(d, "180px")}
+      <div class="body">
+        <div class="dest-title">${d.name}</div>
+        <div class="dest-sub">${d.country} · ${money(d.cost)} · ${d.visa}</div>
+        <div class="chips" style="margin-top:10px">${d.tags.map(t=>`<span class="chip">${t}</span>`).join("")}</div>
+        <div class="muted" style="margin-top:12px;line-height:1.72">${d.summary}</div>
+        <div class="actions" style="margin-top:12px">
+          <button class="action-btn" data-guide-itinerary="${d.id}">Open itinerary</button>
+          <button class="action-btn" data-guide-why="${d.id}">Open reasons</button>
+        </div>
+      </div>
+    </div>
+  `).join("");
+
+  document.querySelectorAll("[data-guide-itinerary]").forEach(btn => btn.addEventListener("click", ()=>{
+    const d = byId(btn.dataset.guideItinerary);
+    openModal(`
+      <div class="modal-head">
+        <div>
+          <div class="k">Itinerary</div>
+          <div style="font-size:32px;font-weight:900;line-height:1.05;margin-top:6px">${d.name}</div>
+        </div>
+        <button class="close-btn" id="closeModalBtn">✕</button>
+      </div>
+      ${destinationBadge(d, "220px")}
+      <div class="grid" style="margin-top:14px">
+        ${d.itinerary.map(day=>`<div class="callout" style="margin-top:0"><strong>${day.day}</strong><div class="muted" style="margin-top:6px;line-height:1.7">${day.text}</div></div>`).join("")}
+      </div>
+    `);
+  }));
+  document.querySelectorAll("[data-guide-why]").forEach(btn => btn.addEventListener("click", ()=>{
+    const d = byId(btn.dataset.guideWhy);
+    openModal(`
+      <div class="modal-head">
+        <div>
+          <div class="k">Why pick this</div>
+          <div style="font-size:32px;font-weight:900;line-height:1.05;margin-top:6px">${d.name}</div>
+        </div>
+        <button class="close-btn" id="closeModalBtn">✕</button>
+      </div>
+      ${destinationBadge(d, "220px")}
+      <div class="chips" style="margin-top:14px">${d.tags.map(t=>`<span class="chip">${t}</span>`).join("")}</div>
+      <div class="grid" style="margin-top:14px">
+        ${d.why.map(item=>`<div class="callout" style="margin-top:0"><strong>${item}</strong></div>`).join("")}
+      </div>
+    `);
+  }));
+}
+
+function bindEvents(){
+  document.querySelectorAll(".tab").forEach(btn => btn.addEventListener("click", ()=>switchTab(btn.dataset.tab)));
+  document.getElementById("submitVoteBtn").addEventListener("click", submitVote);
+  document.getElementById("resetDemoBtn").addEventListener("click", resetDemo);
+
+  const unlock = document.getElementById("adminUnlockTarget");
+  if(unlock){
+    unlock.addEventListener("click", ()=>{
+      adminTapCount += 1;
+      clearTimeout(adminTapTimer);
+      adminTapTimer = setTimeout(()=>{ adminTapCount = 0; }, 1400);
+      if(adminTapCount >= 7){
+        adminUnlocked = true;
+        adminTapCount = 0;
+        renderAdminBox();
+        toast("Admin controls unlocked.");
+      }
+    });
+  }
+
+  window.addEventListener("keydown", (e)=>{ if(e.key==="Escape") closeModal(); });
+}
+
+async function init(){
+  bindEvents();
+  renderVote();
+  renderGuide();
+  await detectLiveMode();
+
+  const url = new URL(window.location.href);
+  if(url.hash === "#admin" || url.searchParams.get("admin") === "1"){
+    adminUnlocked = true;
+  }
+
+  renderHero();
+  renderResults();
+  renderAdminBox();
+}
+init();
+</script>
+</body>
+</html>
